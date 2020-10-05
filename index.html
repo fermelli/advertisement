@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Advertisements</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- EDITOR COMPONENT -->
+    <template id="editor-component">
+        <div class="editor">
+            <form @submit.prevent="save">
+                <div class="form-head">
+                    <div class="form-group">
+                        <label for="title">Título</label>
+                        <input id="title" type="text" v-model="advertisement.title" required>
+                    </div>
+                </div>
+                <div class="form-body">
+                    <div class="editor-sections">
+                        <div class="editor-sections-actions">
+                            <div v-for="(section, indexSection) in advertisement.sections" :key="section.id"
+                                :class="{ 'section-active': indexEditorSectionZoneActive === indexSection }">
+                                <button @click.prevent="setIndexEditorSectionZoneActive(indexSection)">Sección
+                                    {{ indexSection + 1 }}</button>
+                            </div>
+                        </div>
+                        <div class="editor-section" v-for="(section, indexSection) in advertisement.sections"
+                            :key="section.id">
+                            <div class="editor-section-zone" v-show="indexEditorSectionZoneActive === indexSection">
+                                <div class="form-group">
+                                    <label :for="'sectionTitle' + indexSection">Título de Sección</label>
+                                    <input type="text" :id="'sectionTitle' + indexSection" v-model="section.title"
+                                        required>
+                                </div>
+                                <label>Imágenes</label>
+                                <button class="btn-add btn-add-image"
+                                    @click.prevent="add(indexSection, 'images')">+</button>
+                                <div class="editor-item editor-images">
+                                    <div class="form-group" v-for="(image, indexImage) in section.images"
+                                        :key="image.id">
+                                        <label :for="'image' + indexSection + indexImage">Imágen
+                                            {{ indexImage + 1 }}</label>
+                                        <input type="text" :id="'image' + indexSection + indexImage" v-model="image.src"
+                                            required>
+                                        <button class="btn-delete btn-delete-image"
+                                            @click.prevent="remove(indexSection, indexImage, 'images')"
+                                            :disabled="!(section.images.length - 1)">-</button>
+                                    </div>
+                                </div>
+                                <label>Características</label>
+                                <button class="btn-add btn-add-feature"
+                                    @click.prevent="add(indexSection, 'features')">+</button>
+                                <div class="editor-item editor-features">
+                                    <div class="form-group" v-for="(feature, indexFeature) in section.features"
+                                        :key="feature.id">
+                                        <label :for="'feature' + indexSection + indexFeature">Característica
+                                            {{ indexSection + indexFeature + 1 }}</label>
+                                        <input type="text" :id="'feature' + indexSection + indexFeature"
+                                            v-model="feature.text" required>
+                                        <button class="btn-delete btn-delete-feature"
+                                            @click.prevent="remove(indexSection, indexFeature, 'features')"
+                                            :disabled="!(section.features.length - 1)">-</button>
+                                    </div>
+                                </div>
+                                </ /div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-save">Guardar</button>
+                        <button @click.prevent="closeModal" class="btn-close-modal">Cancelar</button>
+                    </div>
+            </form>
+            <div @animationend="closeModal" class="tooltip" v-show="isShowTooltip" :class="{ show: isShowTooltip }">
+                <div>Cambios Guardados Correctamente</div>
+            </div>
+        </div>
+    </template>
+
+    <!-- SECTION COMPONENT -->
+    <template id="section-component">
+        <div class="section">
+            <h2 class="title2">{{ section.title }}</h2>
+            <div class="images">
+                <img v-for="(img, index) in section.images" :key="img.id" :src="'assets/' + img.src"
+                    :class="{ active: index === indexActive }" :style="{ animationDuration: animationDuration() }"
+                    @animationend="animate">
+            </div>
+            <div class="features">
+                <ul>
+                    <li v-for="feature in section.features">{{ feature.text }}</li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <!-- APP -->
+    <div id="app">
+        <div class="container">
+            <div class="marquee">
+                <h1 :class="{ title: advertisement.title }">{{ advertisement.title }}</h1>
+            </div>
+            <div class="sections">
+                <section-component v-for="section in advertisement.sections" :key="section.id" :section="section" />
+            </div>
+        </div>
+        <button class="btn-edit" @click="open">Editar</button>
+        <div class="dialog" :class="{ show: isOpen }">
+            <div class="modal">
+                <div class="modal-head">
+                    <h4>Editar</h4>
+                    <button class="btn-close" @click="close">X</button>
+                </div>
+                <div class="modal-body">
+                    <editor-component :is-active="isOpen" />
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="js/index.js"></script>
+
+</html>
