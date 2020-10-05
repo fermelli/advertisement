@@ -56,3 +56,5 @@ Se deben guardar en la carpeta [assets](assets/). Se recomienda imágenes con fo
 
 ![captura - 1](images/captura-1.png)
 ![captura - 2](images/captura-2.png)
+
+~~1-2019/independiente/vue/advertisement~~
